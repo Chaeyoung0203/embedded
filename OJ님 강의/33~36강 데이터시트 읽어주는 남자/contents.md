@@ -96,6 +96,14 @@
 
 - RTC를 기준으로 특정 동작을 수행 할 수 있다.
 
+### Low-power
+
+- Sleep mode
+- Stop mode
+- Standby mode(준비 단계)
+
+#### V(BAT): 배터리로 공급되는 전원
+
 ### 초단위
 
 - **ms(milli second) 1s = 1000ms**
@@ -106,9 +114,17 @@
 
 - 2개의 12비트 A/D 컨버터
 - 최대 1us내에 변환 완료
-- **up to 16-channels**: ADC 장치에 전압이 공급되는 채널이 16개 있다.
-- **dual sample and hold capacity**: ADC 아날로그 신호를 디지털화 하기위해서는 입력되는 시간이 일정시간 보장되어야 한다. 따라서 캐패시터로 전류를 일정시간 안정적으로 공급하여 sample을 확보한다라는 의미일 것
-  - 그리고 해당 샘플이 2개라는 의미
+- **up to 16-channels**: ADC 장치에 전압이 공급되는 채널이 최대 16개 있다.
+- **Conversion range: 0V to 3.6V**: 0에서 3.6V까지의 전압을 디지털로 전환해 출력
+- **dual sample and hold capacity**
+  - ADC가 두 개의 **아날로그 신호(채널)**를 동시에 캡처하고 유지할 수 있는 능력
+  - 두 개의 캐패시터가 각각 두 채널의 아날로그 신호를 동시에 샘플링 및 유지할 수 있어 여러 입력 신호를 **동기화**하여 처리할 수 있음
+    - **동기화**: 여러 개의 아날로그 신호를 동시에 또는 특정 시점에 맞춰 일관되게 처리하는 것을 의미
+  - **샘플링**: 아날로그 신호가 ADC 입력으로 들어오면, ADC는 일정한 시간 간격마다 신호의 현재 값을 읽는데 **이 때 읽어낸 값**
+  - **홀드**: 샘플링된 신호 값을 일정 시간동안 캐패시터에 저장(유지)
+    - 캐패시터는 전기를 충전하는 특성 때문에 이 값을 유지
+  - 저장된 신호 값은 이후에 디지털 값으로 변환
+    - 변환 중에도 캐패시터는 샘플 값을 유지하여 안정적인 변환이 가능하도록 함
 
 ### DMA(Direct Memory Access)
 
@@ -123,44 +139,59 @@
 - 26/37/51/80 I/Os
 - all mappable on 16 **external interrupt vectors** and almost all **5 V-tolerant**
   - **intterupt vectors**: 인터럽트가 발생했을 때 해당 인터럽트를 처리하기 위해 필요한 정보가 저장된 위치를 가리키는 포인터
-  - **5 V-tolerant**: 해당 pin에 5V의 전입이 들어와도 다른 GPIO pin이나 디바이스의 다른 block에 문제가 발생하지 않음
+  - **5 V-tolerant**: 해당 pin에 5V의 전압이 들어와도 다른 GPIO pin이나 디바이스의 다른 block에 문제가 발생하지 않음
 
-### Debug mode
+## Debug mode
 
-#### Serial Wire Debug(SWD)
+### Serial Wire Debug(SWD)
 
-- pin 설정이 단순하여 조작하기 쉽다.
-- ST-link 도구를 사용하여 upload, download 및 디버깅을 할 수 있다.
+![alt text](image-1.png)
 
-#### JTAG interfaces
+- pin 설정이 단순하여 조작하기 쉽다.(주로 2개 사용)
+  - **Data I/O pin**
+  - **Clock Pin**
+  - **SWO(Optional trace output pin)**: 많이 사용 안함
+- **ST-link 도구를 사용하여 upload, download 및 디버깅을 할 수 있다.**
 
-- pin 배열이 복잡하다.
+### JTAG interfaces
 
-### 7 timers
+![alt text](image-2.png)
+
+- pin 배열이 복잡하다.(5개)
+  - **TMS(Test Mode State Pin)**
+  - **RTCK(JTAG Return Test Clock)**
+  - **TRST(Test Reset Pin)**
+  - **VCC GND**
+  - **Reset pin**
+
+## 7 Timers
 
 #### Three 16-bit timers, each with up to 4 IC/OC/PWM or pulse counter and quadrature (incremental) encoder input
 
-- **Input Capture mode**: 외부 신호의 특정 이벤트(상승 에지, 하강 에지 등)를 캡처하여 타이머 카운터 값을 기록.
-- **Output Campare mode**: 타이머 카운터가 사전 설정된 값에 도달하면 출력 핀의 상태를 변경(high, low, toggle)
-- **PWM Output mode**: 필요한 만큼의 전압을 받기 위하여 기존 입력된 전압을 타이머를 기준으로 나눠서 입력해 받아들이는 총 전압의 양을 줄이는 방법
-  - 16-bit, motor control PWM timer with dead-time generation and emergency stop
+- **Input Capture** 모드
+- **Output Compare** 모드
+- **PWM(Pulse Width Modulation) Output** 모드
+  - **PWM**
+    - **디지털 신호를 아날로그 신호처럼 사용할 수 있도록 변환해주는 기술**
+    - **타이머에 따라 주기적인 신호(펄스)의 폭을 조절하여 원하는 아날로그 출력값을 얻는 방식**(100V => 50V )
+- **Counter** 모드: 사용자가 설정한 카운터가 다 줄면 인터럽트 발생
+- **External Input Counter** 모드: 버튼이 눌려 외부 인터럽트 발생후 이때마다 카운터 값이 증가
 
-#### 그외 timer 모드
+#### 2 Watch Dog Timer (Independent and Window)
 
-- **Counter mode**: 사용자가 설정한 카운터가 다 줄면 인터럽트가 발생
-- **External Input counter mode**: 외부의 이벤트마다 인터럽트가 발생할 때마다 카운트 값이 증가
-- **2 watchdog timers (Independent and Window)**
-  - 사용자의 cpu가 정상적으로 작동하는지 검사
-  - 주기적인 점검 중 시스템이 정상적으로 작동하지 않을 때 자동으로 리셋을 수행하여 시스템의 안정성을 보장.
-  #### Independent WDT: 별도의 내부 저속 클럭으로 동작하며, 주기적으로 리셋되지 않으면 시스템을 리셋.
-  #### Window WDT: 설정된 "윈도우" 내에서만 리셋할 수 있어, 너무 자주 또는 너무 늦게 리셋되는 것을 방지.
+- 사용자의 cpu가 정상적으로 작동하는지 검사
+- 주기적인 점검 중 시스템이 **정상적으로 작동하지 않을 때(Watch dog Interrupt)** 자동으로 리셋을 수행하여 시스템의 안정성을 보장.
+- cpu에 독립적이다.
+- Systick timer 24-bit downCounter(타이머 중에서 **기준이 되는 타이머**)
+
+#### Window WDT: 설정된 "윈도우" 내에서만 리셋할 수 있어, 너무 자주 또는 너무 늦게 리셋되는 것을 방지.
+
 - **SysTick timer 24-bit downcounter**
   - 기준이 되는 timer로서 프로그래밍 중 시간을 활용할 때 사용
 
-### CRC calculation unit
+## CRC calculation unit
 
-- 주로 데이터 전송 또는 저장의 무결성을 검증하기 위해 사용
-- 노이즈나 다른 형태의 간섭으로 인한 데이터 오류를 감지할 수 있도록 설계
-- OJ 강의 [모드버스 프로토콜](https://www.youtube.com/playlist?list=PLz--ENLG_8TPJsTDyihX9_fdpLPFdd1xl) 에서 CRC 강의 참고
+### CRC란?
 
-![alt text](image.png)
+- 시리얼 통신을 할 때 생기는 노이즈로 인해 데이터 오류를 검증하는 과정
+-
