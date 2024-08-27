@@ -1,24 +1,16 @@
-> ## 코드 분석 방법
->
-> - 소스가 어떤 환경에서 돌아가는지 이해하기
-> - 소스가 돌아갈 수 있는 환경을 만들기
-> - 디버깅 할 수 있는 상황 만들기
+# HAL 드라이버 코드 분석하기
 
-# \_\_HAL_FLASH_PREFETCH_BUFFER_ENABLE()
-
-Hal_Init()의 **\_\_HAL_FLASH_PREFETCH_BUFFER_ENABLE()** 분석하기
+## Hal_Init()의 **\_\_HAL_FLASH_PREFETCH_BUFFER_ENABLE()** 분석하기
 
 ```c
-HAL_StatusTypeDef HAL_Init(void)
-{
-  /* 분석할 함수 */
-  __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
-}
+#define __HAL_FLASH_PREFETCH_BUFFER_ENABLE()
+(FLASH->ACR |= FLASH_ACR_PRFTBE)
 ```
 
-```c
-#define __HAL_FLASH_PREFETCH_BUFFER_ENABLE()    (FLASH->ACR |= FLASH_ACR_PRFTBE)
-```
+### TIP
+
+- **코드 회색 테두리를 통해 코드의 활성화/비활성화 여부를 알 수 있다.**
+- **breakPoint를 통해 code flow가 올바른지 파악할 수 있다.**
 
 ## FLASH = (FLASH_TypeDef \*)FLASH_R_BASE
 
