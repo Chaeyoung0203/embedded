@@ -10,28 +10,29 @@
 ### TIP
 
 - **코드 회색 테두리를 통해 코드의 활성화/비활성화 여부를 알 수 있다.**
-- **breakPoint를 통해 code flow가 올바른지 파악할 수 있다.**
+- **breakPoint를 통해 디버깅시 code가 올바르게 실행되고 있는지 확인할 수 있다.**
+- **Ctrl+H를 통해서 레지스터값 추적**
 
-## FLASH = (FLASH_TypeDef \*)FLASH_R_BASE
+### FLASH = ((FLASH_TypeDef \*)FLASH_R_BASE)
 
-### FLASH_TypeDef
+#### FLASH_TypeDef
 
 ```c
 typedef struct
 {
-  __IO uint32_t ACR;
-  __IO uint32_t KEYR;
-  __IO uint32_t OPTKEYR;
-  __IO uint32_t SR;
-  __IO uint32_t CR;
-  __IO uint32_t AR;
-  __IO uint32_t RESERVED;
-  __IO uint32_t OBR;
-  __IO uint32_t WRPR;
+  __IO uint32_t ACR; // (0x4002,2000)
+  __IO uint32_t KEYR; // (0x4002,2004)
+  __IO uint32_t OPTKEYR; // (0x4002,2008)
+  __IO uint32_t SR; // (0x4002,200c)
+  __IO uint32_t CR; // (0x4002,2010)
+  __IO uint32_t AR; // (0x4002,2014)
+  __IO uint32_t RESERVED; // (0x4002,2018)
+  __IO uint32_t OBR; // ((0x4002,201c))
+  __IO uint32_t WRPR; // (0x4002,2020)
 } FLASH_TypeDef;
 ```
 
-#### \_\_IO란?
+- \_\_IO란?
 
 ```c
 #define     __IO    volatile       /*!< Defines 'read / write' permissions */
@@ -40,7 +41,7 @@ typedef struct
 - 컴파일러 최적화를 막는 역할을 한다.
 - 레지스터에 저장을 하지 않게 하는 역할
 
-### FLASH_R_BASE
+#### FLASH_R_BASE
 
 ```c
 #define FLASH_R_BASE          (AHBPERIPH_BASE + 0x00002000UL)
