@@ -1,41 +1,25 @@
-### ACR이란?
+### 지금까지 작성한 코드들을 바탕으로 데이터시트 이해해보기
 
-#### 레퍼런스 메뉴얼 참고
+## 레퍼런스 메뉴얼
 
-> The FLASH_ACR register is used to enable/disable **prefetch** and half cycle access
->
-> and to control the **Flash memory** access time according to the CPU frequency.
->
-> The tables below provide the bit map and bit descriptions for this register.
+![alt text](image-1.png)
 
-> FLASH_ACR 레지스터는 **프리페치** 및 반주기액세스를 활성화/비활성화하는 데 사용됩니다.
->
-> CPU 주파수에 따라 플래시 메모리 액세스 시간을 제어합니다.
->
-> 아래 테이블 이 레지스터에 대한 비트맵과 비트 설명을 제공
+- 레퍼런스에서 55p FLASH_ACR의 BASE address를 보면 주솟값이 아까 코드에서 도출한 값과 같다는것을 알 수 있다.
 
-**`FLASH->ACR |= FLASH_ACR_PRFTBE`는 `FLASH->ACR |= 0x1UL << 4U`** 이며
+- **59p 설명**: The FLASH_ACR register is used to enable/disable prefetch and half cycle access, and to
+  control the Flash memory access time according to the CPU frequency. The tables below**
+  provide the bit map and bit descriptions for **this register.
+  - FLASH_ACR 레지스터는 **프리페치** 및 반주기액세스를 활성화/비활성화하는 데 사용됩니다.
+  - CPU 주파수에 따라 플래시 메모리 액세스 시간을 제어
+  - 아래 테이블에서 이 레지스터에 대한 비트맵과 비트 설명을 제공한다.
 
 ![alt text](image.png)
 
 #### 위 reference를 통해 알 수 있는 것
 
 - Flash_ACR 레지스터는 Prefetch buffer의 enable/disable을 control한다.
-- **PRFTBE**는 5번째 bit 즉 4bit 자리의 bit값으로 결정된다.
-
-```c
-volitile unsigend int * reg = 0x4002,2000;
-*reg = 48 // 0x0011,0000
-
-*reg |= 16; // prefetch buffer enable 0x0011,0000
-
-*reg &= 16; // prefetch buffer disable 0x0001,0000
-```
-
-##### 위 코드를 보면
-
-- enable/disable에 따른 reg bit 값의 배치를 알 수 있다.
-- 기본적을 ACR 레지스터는 prefetch buffer가 enable mode이다.
+- Bit 4의 자리를 1로 설정함으로서 **PRFTBE**를 활성화
+- **즉, 플레시 메모리의 프리페치 기능을 활성화**
 
 ## Flash
 
@@ -44,7 +28,7 @@ volitile unsigend int * reg = 0x4002,2000;
 
 ## prefetch
 
-- `MCU`가 프로그램 실행 속도를 높이기 위해 **미리 데이터를 로딩**하는 기술
+- `MCU`이 프로그램 실행 속도를 높이기 위해 **미리 데이터를 로딩**하는 기술
 - 가까운 미래에 필요로 할 **데이터**와 **명령어**를 예측하여 `Flash` 메모리로부터 `SRAM(빠른 메모리)`에 해당 데이터들을 미리 로드
 
 ## Buffer

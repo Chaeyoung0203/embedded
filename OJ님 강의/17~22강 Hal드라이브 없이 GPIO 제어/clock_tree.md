@@ -1,3 +1,14 @@
+### 클럭이란?
+- 어떠한 일을 수행하는데에 **기준점**, 심장
+- 디지털 회로에서 동작의 타이밍을 제어하는 신호
+- 단위: Hz
+- 높은 클럭 주파수는 더 많은 연산을 빠르게 처리 하지만 발열과 전력소모도 증가한다.
+
+  #### 크리스탈
+  - 외부클럭 소자
+  - 일정양의 전력을 공급하면 일정한 주파수를 발생시킨다.
+  - 단위 [K]
+
 ## IOC Mode의 Clock Configuration
 
 ![alt text](image-6.png)
@@ -36,8 +47,7 @@
 
 #### Multiplexer (Mux)란?
 
-- 여러 개의 입력 신호 중 **하나를 선택**하여 하나의 출력으로 전달하는 디지털 신호
-- **선택 신호(select signals)** 사용하여 입력 신호 중 어느 하나를 선택
+- 여러 개의 입력 클럭 신호 중 **하나를 선택**하여 하나의 출력으로 전달하는 디지털 신호
 
 #### System Clock Mux의 역할
 
@@ -78,45 +88,6 @@
 > (RCC_AHBENR), APB1 peripheral clock enable register (RCC_APB1ENR) and APB2
 > peripheral clock enable register (RCC_APB2ENR).
 
-> #### Peripheral clock gating 번역
->
-> - `run mode`에서, Peripheral devices와 Memory에 대한 `HCLK` 및 `PCLKx`는 전력 소비를 줄이기 위해 언제든지 중지될 수 있습니다.
->
->   - `HCLK`: `고속 버스 클록`, `시스템 버스 및 메모리 클록의 주 클록`
->   - `PCLKx`: `주변 장치 클록`, APB 버스에 연결된 주변 장치들의 클록 (APB1, APB2)
->
-> - `Sleep Mode`에서 전력 소비를 더욱 줄이기 위해, `WFI` 또는 `WFE` 명령을 실행하기 전에 주변 장치 클록을 비활성화할 수 있습니다.
->   - `WFI(Wait For Interrupt)`: 인터럽트가 발생할 때까지 대기하는 명령
->   - `WFE(Wait For Event)`: 이벤트가 발생할 때까지 대기하는 명령
-> - `Peripheral clock gating`은 **AHB 주변 장치 클록 활성화 레지스터 (RCC_AHBENR)**, **APB1 주변 장치 클록 활성화 레지스터 (RCC_APB1ENR)** 및 **APB2 주변 장치 클록 활성화 레지스터(RCC_APB2ENR)** 에 의해 제어됩니다.
-
-### APB2 peripheral clock enable register (RCC_APB2ENR)
-
-> #### AHB/APB bridges (APB)
->
-> The two AHB/APB bridges provide full synchronous connections between the AHB and the
-> 2APB buses. APB1 is limited to 36 MHz, APB2 operates at full speed (up to 72 MHz
-> depending on the device).
-> Refer to Table 3 for the address mapping of the peripherals connected to each bridge.
-> After each device reset, all peripheral clocks are disabled (except for the SRAM and FLITF).
-> Before using a peripheral you have to enable its clock in the RCC_AHBENR,
-> RCC_APB2ENR or RCC_APB1ENR register.
-> Note: When a 16- or 8-bit access is performed on an APB register, the access is transformed into a 32-bit access: the bridge duplicates the 16- or 8-bit data to feed the 32-bit vector.
-
-> #### 번역
->
-> AHB/APB 브리지 (APB)
->
-> - 두 개의 AHB/APB **Bridge**는 AHB와 두 개의 APB 버스 간에 **완전한 동기화 연결을 제공**
-> - **APB1**은 36MHz로 제한되고, **APB2**는 최대 72MHz (장치에 따라 다름)로 동작합니다.
-> - 각 **Bridge**에 연결된 주변 장치의 주소 매핑은 표 3을 참조하십시오.
-> - 각 장치가 **리셋**된 후에는 **모든 주변 장치 클록이 비활성화**됩니다 (SRAM 및 FLITF는 예외)
-> - 주변 장치를 사용하기 전에 `RCC_AHBENR`, `RCC_APB2ENR` 또는 `RCC_APB1ENR` 레지스터에서 해당 클록을 활성화해야 합니다.
->
-> 참고:
-> 16비트 또는 8비트 접근이 `APB` 레지스터에서 수행될 때, 접근은 32비트 접근으로 변환됩니다. 브리지(버스)는 16비트 또는 8비트 데이터를 복제하여 32비트 벡터에 전달합니다.
-
-> ![alt text](../img/table3.png)
 
 ##### 리셋: 레지스터의 비트가 0으로 설정되어 주변 장치가 `비활성화`된다는 것
 

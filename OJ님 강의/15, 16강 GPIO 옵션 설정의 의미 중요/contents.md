@@ -6,14 +6,15 @@
 
 - 설정한 pin의 초기 값을 설정
 
-### `High`: 3.3V 전압 출력 (전원을 키자마자 작동을 원할 때 사용)
+### `High`: 전원 on일 때 해당 pin의 state를 전압이 출력되도록 설정
+- `pin = 1`
 
 ```c
 HAL_GPIO_WritePin(GPIO_LED_GPIO_Port, GPIO_LED_Pin, GPIO_PIN_SET); // High 옵션 설정에 따른 코드 세팅
 ```
 
-### `Low`: 0V 전압 출력(전원을 키자마자 작동하지 않기를 원할 때 사용)
-
+### `Low`: 전원 off일 때 해당 pin의 state를 전압이 출력되지않도록 설정
+- `pin = 0`
 ```c
 HAL_GPIO_WritePin(GPIO_LED_GPIO_Port, GPIO_LED_Pin, GPIO_PIN_RESET); // Low 옵션 설정에 따른 코드 세팅
 ```
@@ -131,7 +132,7 @@ if(!HAL_GPIO_ReadPin(GPIO_SW_GPIO_Port, GPIO_SW_Pin))
   HAL_Delay(100);
   ```
 
-  - `PC13`부분이 `LOW` 상태 즉, **0V**로 출력되면 **3.3V**전압은 `<-` 방향으로 출력된다.
+  - `PC13`부분이 `LOW` 상태 즉, **0V**로 출력되면 전위차에 따라 **3.3V**전압은 `<-` 방향으로 출력된다.
     즉, `LED`가 켜진다.
 
   - 반대로 `PC13`부분이 `HIGH` 상태 즉, **3.3V**로 출력되면 양쪽 전압이 같으므로 전류는 어느방향으로도 흐르지않는다.
@@ -267,3 +268,26 @@ if(!HAL_GPIO_ReadPin(GPIO_SW_GPIO_Port, GPIO_SW_Pin))
 
 #define문을 사용하여 나중에 회로도 pin의 위치가 변경되어도
 pin설정만 바꾸면 쉽게 코드를 수정할 수 있다.
+
+### 결론
+<img src="image-16.png" alt="alt text" width="300"/>\
+
+#### PA0
+- 끝단이 GND이다.
+- 그리고 바로위에 switch가 있다.
+- 그러면 아래 그림과 일치한다.
+
+<img src="image-18.png" alt="alt text" width="300"/>
+
+- pull up 저항 회로로 생각할 수 있다.
+- 만약 끝단이 3.3V였다면 전원에 스위치가 나오므로 pull-down 저항회로로 생각할 수 있다.(아래 그림 참고)
+
+<img src="image-19.png" alt="alt text" width="300"/>
+
+#### PA13
+- 다이오드에서 삼각형이 `애노드` 일자 막대기가  `캐소드`이다.
+  + 다이오드에서는 항상 `애노드`에서 `캐소드`방향으로만 전류가 흐른다.
+- 끝단이 3.3V 전원이다.
+- PA13은 OUTPUT모드의 Push Pull모드
+- High상태이면 끝단의 3.3V와 전위차가 나지 않기때문에 전류가 흐르지 않는다.
+- LOW상태이면 끝단의 3.3V로부터 전위차가 발생하여 애노드에서 캐소드방향으로 전류가 흐른다.
