@@ -2,6 +2,12 @@
 
 # GPIO 옵션 설정 분석하기
 
+## 추가 지식
+- GPIO Output mode에서 pull-up/down을 설정하는 이유는 핀의 초기 상태를 결정하기 위해서이다.
+- output level을 high로 설정하더라도 Pull-down모드로 설정했더라면 초기화 과정에서는 초기 상태가 low로 있다가 끝나면 high로 변한다.
+- 짧은 순간이지만 어떤 문제가 발생할지 모른다.
+- 따라서 초기 상태값도 신경써서 옵션값을 결정짓도록 하자
+
 ## GPIO output level
 
 - 설정한 pin의 초기 값을 설정
