@@ -98,7 +98,6 @@ sample code bearing this copyright.
 
 #include "OneWire.h"
 
-
 OneWire::OneWire(uint8_t pin)
 {
 	pinMode(pin, INPUT);
