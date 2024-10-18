@@ -3,6 +3,7 @@
 # GPIO 옵션 설정 분석하기
 
 ## 추가 지식
+
 - GPIO Output mode에서 pull-up/down을 설정하는 이유는 핀의 초기 상태를 결정하기 위해서이다.
 - output level을 high로 설정하더라도 Pull-down모드로 설정했더라면 초기화 과정에서는 초기 상태가 low로 있다가 끝나면 high로 변한다.
 - 짧은 순간이지만 어떤 문제가 발생할지 모른다.
@@ -13,6 +14,7 @@
 - 설정한 pin의 초기 값을 설정
 
 ### `High`: 전원 on일 때 해당 pin의 state를 전압이 출력되도록 설정
+
 - `pin = 1`
 
 ```c
@@ -20,7 +22,9 @@ HAL_GPIO_WritePin(GPIO_LED_GPIO_Port, GPIO_LED_Pin, GPIO_PIN_SET); // High 옵�
 ```
 
 ### `Low`: 전원 off일 때 해당 pin의 state를 전압이 출력되지않도록 설정
+
 - `pin = 0`
+
 ```c
 HAL_GPIO_WritePin(GPIO_LED_GPIO_Port, GPIO_LED_Pin, GPIO_PIN_RESET); // Low 옵션 설정에 따른 코드 세팅
 ```
@@ -196,8 +200,6 @@ if(!HAL_GPIO_ReadPin(GPIO_SW_GPIO_Port, GPIO_SW_Pin))
 - `전원`과 `입력 핀` 사이에 `풀업 저항기`를 연결하여, 스위치가 열려 있을 때 입력 핀이 **5V 전압을 유지**
 - `풀업 저항기`는 `floating 상태`를 방지하여 입력 핀이 `안정적인 HIGH 상태`를 유지하도록 한다.
 - 저항값은 데이터시트에 사용된 값으로 쓰는게 좋다.
-- 보통 IC2 1개에 4.7k를 붙인다.
-- 많은 IC2를 쓰면 2.7k로 낮추기도 한다.
 
 #### 위 그림에서 switch를 닫을 경우
 
@@ -276,9 +278,26 @@ if(!HAL_GPIO_ReadPin(GPIO_SW_GPIO_Port, GPIO_SW_Pin))
 pin설정만 바꾸면 쉽게 코드를 수정할 수 있다.
 
 ### 결론
-<img src="image-16.png" alt="alt text" width="300"/>\
+
+- 위 지식들과 그림을 바탕으로 저번에 했던 코드를 이해할 수 있다.
+  <img src="image-16.png" alt="alt text" width="300"/>\
+
+```c
+while (1)
+  {
+	if (HAL_GPIO_ReadPin(GPIO_SWITCH_GPIO_Port, GPIO_SWITCH_Pin))
+	{
+		HAL_GPIO_WritePin(GPIO_LED_GPIO_Port, GPIO_LED_Pin, 1);
+	} else
+	{
+		HAL_GPIO_WritePin(GPIO_LED_GPIO_Port, GPIO_LED_Pin, 0);
+	}
+	HAL_Delay(100);
+  }
+```
 
 #### PA0
+
 - 끝단이 GND이다.
 - 그리고 바로위에 switch가 있다.
 - 그러면 아래 그림과 일치한다.
@@ -291,9 +310,10 @@ pin설정만 바꾸면 쉽게 코드를 수정할 수 있다.
 <img src="image-19.png" alt="alt text" width="300"/>
 
 #### PA13
-- 다이오드에서 삼각형이 `애노드` 일자 막대기가  `캐소드`이다.
-  + 다이오드에서는 항상 `애노드`에서 `캐소드`방향으로만 전류가 흐른다.
+
+- 다이오드에서 삼각형이 `애노드` 일자 막대기가 `캐소드`이다.
+  - 다이오드에서는 항상 `애노드`에서 `캐소드`방향으로만 전류가 흐른다.
 - 끝단이 3.3V 전원이다.
-- PA13은 OUTPUT모드의 Push Pull모드
+- PC13은 OUTPUT모드의 Push Pull모드
 - High상태이면 끝단의 3.3V와 전위차가 나지 않기때문에 전류가 흐르지 않는다.
 - LOW상태이면 끝단의 3.3V로부터 전위차가 발생하여 애노드에서 캐소드방향으로 전류가 흐른다.

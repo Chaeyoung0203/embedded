@@ -45,7 +45,7 @@ OneWire::OneWire(uint8_t pin)
 	pinMode(pin, INPUT); // pin Mode를 Input으로 setting
 	// 매개변수 **번 pin으로부터 bitMast, baseReg값 저장
   bitmask = PIN_TO_BITMASK(pin);
-	baseReg = PIN_TO_BASEREG(pin);
+  baseReg = PIN_TO_BASEREG(pin);
 #if ONEWIRE_SEARCH
 	reset_search();
 #endif
@@ -110,9 +110,12 @@ uint8_t OneWire::read_bit(void)
 
 - 1-wire, 1개의 wire선으로 read 및 write 모두 수행
 
-##### 강의 내용에 없는 클래스 및 함수구조는 따로 공부해서 정리할 것
+### 결론
 
-### 온도센서 칩 wire결선하기
+- 회로도를 보고
 
-- 기억안나면 73강 참고
-- 회로도보고 stm칩과 연결
+#### 1. 온도센서 칩 wire결선하기
+
+#### 2. stm32칩과 빵판 온도센서 회로 구성하기
+
+#### 3. oneWire 클래스와 read, write, read_bit함수에 대한 표면적인 이해(코드로서)
