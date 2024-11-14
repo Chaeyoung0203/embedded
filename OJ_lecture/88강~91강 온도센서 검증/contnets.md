@@ -24,11 +24,14 @@ void DS18B20_StartAll(OneWire_t* OneWire)
      ==> oxCC(Skip Rom 명령어): 모든 Slave 장치들에게 동시에 명령어를 송신
 - 3. **DS18B20_CMD_CONVERTTEMP**
      ==> Convert T: 0x44
-     - 온도의 변환 시작
-     - **온도변환이 진행중이면(0), 완료되면(1)**
+     - 외부 전원으로부터 전력을 공급받는 경우
+     - **Master가 read time slot을 생성할 수 있으며 Convert T 명령을 한 후 DS18B20은 온도가 변환되는 동안 0을 응답하고 온도변환이 끝나면 1을 응답한다.**
+     - 즉, 외부전력 모드에서 **온도변환이 진행중이면(0), 완료되면(1)**을 반환
      - 관련 문서 ![alt text](image-1.png)
 
 ### AllDone(&OneWire) 함수
+
+- 위 datasheet 해석에 따라 온도 변환이 완료됐는지 진행중인지 판단하는 함수
 
 ```c
 uint8_t DS18B20_AllDone(OneWire_t* OneWire)
@@ -103,7 +106,7 @@ for (uint8_t i = 0; i < TempSensorCount; i++)
 
 ![alt text](image-3.png)
 
-- Rom Code에는 1-wire family code 29Hex값이 포함됨
+- Rom Code에는 1-wire family code 28Hex값이 포함됨
 
 ##### 2. Family code가 포함됬다면? 온도변환이 끝났는지(1) 진행중(0)인지 확인하여 온도변환 성공여부를 확인한다.
 
@@ -141,6 +144,12 @@ for (uint8_t i = 0; i < TempSensorCount; i++)
 		/* CRC invalid */
 		return 0;
 ```
+
+![alt text](image-4.png)
+
+- master가 scratchpad의 내용을 읽는다.
+- 데이터 전송은 최하위 비트(0 byte)부터 시작되고 scratchpad의 9번째(byte 8 - CRC) byte를 읽을때까지 지속된다.
+- master가 오직 part of scratchpad data만 필요할 경우 reading을 종료하는 명령을 할 수도 있다.
 
 ##### 5. 가져온 온도 정보를 저장하고 음수면 양수로 변경
 

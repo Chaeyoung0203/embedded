@@ -35,9 +35,7 @@
 ![alt text](image-1.png)
 
 - 0. 제일 먼저 Rom Search: 0xF0 명령어를 보내서 Slave들이 주소를 보낼 준비를한다.
-- **사전지식**
-  - slave가 1을 송신할 때는 1us Low로 유지한다.
-  - slave가 0을 송신할 때는 15us Low로 유지한다.
+
 - 연결된 slave들이 각각 1bit씩 보낸다.
 - 이 때 **여러가지 경우의 수**가 나오는데
 
@@ -98,26 +96,42 @@ bool	Ds18b20_Init(void)
 }
 ```
 
-- **OneWire_Init(&OneWire,\_DS18B20_GPIO ,\_DS18B20_PIN);** 분석 (함수와 인자값 분석하기)
-- **OneWire_First(&OneWire); 분석하기**
-  - **OneWire_ResetSearch(OneWire_t\* OneWireStruct)** 분석하기
-  - **OneWire_Search(OneWire_t\* OneWireStruct, uint8_t command)** 분석하기
-  - **M가 S에게 데이터 송신**
-    - **OneWire_WriteByte(OneWireStruct, command);**
-      - **OneWire_WriteBit(OneWire_t\* OneWireStruct, uint8_t bit) 분석**
-  - **M가 S로부터 데이터 수신**
-    - Match Rom 명령어를 찾기위한 bit의 값과 보수의 bit값 저장
-    ```
-    id_bit = OneWire_ReadBit(OneWireStruct);
-    cmp_id_bit = OneWire_ReadBit(OneWireStruct);
-    ```
-    - sampling했을 때 1인지 0인지 결정됨
-    - sampling과정에서 장치가 여러개가 보낸 신호는 합쳐진채로 전송된다.
-      - 여기서 0과 1 두종류를 다 수신할 때는 1신호가 0으로부터 먹혀서 0의 신호로 인식된다.
-      - 신호가 2종류이면 (0, 1) 신호 그리고 보수 bit값 (1, 0) 신호이기 때문에 `id_bit`, `cmp_id_bit` 둘다 0이 저장된다.
-    - 처음에 1을 보냈으면 두 번째로 보냈을때는 보수값을 전송한다... 따라서 2개의 bit를 읽는 작업을 한 것
-    - search direction do ~while문에서 멈춤
-  - **OneWire_Search**: 장치 하나를 찾아내는 함수
+- 위 코드를 보면서 분석내용을 읽을것
+
+### void OneWire_Init(OneWire_t* OneWireStruct, GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin) 분석
+
+- DS18B20과 1-wire protocal connetion을 위한 GPIO port, pin 설정
+- TIM2 설정 및 타이머 시작
+
+### OneWire_First(&OneWire); 분석
+
+#### OneWire_ResetSearch(OneWire_t\* OneWireStruct) 분석
+
+- 여러 slave들의 rom_code를 읽기위해 설정한 분기점을 초기설정으로 return
+
+#### OneWire_Search(OneWire_t\* OneWireStruct, uint8_t command) 분석
+
+- `OneWireStruct->LastDeviceFlag`의 값이 1인경우: 모든 장치가 탐색되어 더이상 탐색할 장치가 없는경우
+- `OneWireStruct->LastDeviceFlag`의 값이 0인경우: 탐색 중인 1-wire통신에서 더 탐색할 장치가 있을 경우
+
+- **1-wire reset에서** Presence pulse의 값: 0 ==> slave탐색 성공
+- **1-wire reset에서** Presence pulse의 값: 1 ==> slave탐색 실패
+  - 이 때는 분기점 체크를 초기화
+
+#### Issued Search Command
+
+- Search_ROM [F0] 명령어를 통해 모든 slave의 Rom_code를 read
+
+#### do~while문에서 Search loop에 들어간 후 rom_code를 얻는다.
+
+위 함수에서
+
+- 장치를 찾은 경우 1을 반환
+- 장치를 찾지 못한 경우 0을 반환
+
+#### OneWire_GetFullROM(&OneWire, ds18b20[TempSensorCount-1].Address);
+
+- Ds18b20Sensor_t ds18b20[_DS18B20_MAX_SENSORS].address[8]; 변수에 읽어들인 Rom_code를 저장한다.
 
 #### DS18B20_SetResolution(&OneWire, ds18b20[i].Address, DS18B20_Resolution_12bits);
 
@@ -127,12 +141,4 @@ bool	Ds18b20_Init(void)
 
 #### DS18B20_DisableAlarmTemperature(&OneWire, ds18b20[i].Address);
 
-- 온도가 일정수치 이상이면 알람이 울릴 수 있게 설정하기
-
-#### 앞으로...
-
-- DS18B20을 더 분석해야할까?
-- 이 칩을 앞으로 계속해서 사용할 필요가 있다면? 그래도 된다.
-- 하지만 그렇지 않다면 여기까지만 해두 된다.
-
-#### 적어도 강의에서 나온 부분은 영어 해석을 해보자!
+- 온도센서의 알람을 해지함
