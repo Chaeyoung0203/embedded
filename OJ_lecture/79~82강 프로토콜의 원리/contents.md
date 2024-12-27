@@ -13,8 +13,6 @@
 
 ## 종류
 
-![alt text](image.png)
-
 - parasite power mode는 통신선으로 전원공급까지 한다!
 
 ## 특징
