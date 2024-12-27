@@ -20,7 +20,7 @@
 
 - Master가 Reset Pulse(Initialization Timing)를 보낸다.
 - Slave가 presence pulse로 응답한다.
-- 1-Wire에 연결된 모든 Slave장치의 Rom-code를 읽기위해서 `Rom Search: 0xF0`를 보낸다.
+- 1-Wire에 연결된 Slave장치의 Rom-code를 읽기위해서 `Rom Search: 0xF0` 명령어를 보낸다.
 - 동작원리에 따라 bit를 read
 
 #### ROM Search 동작원리

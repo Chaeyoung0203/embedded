@@ -56,7 +56,7 @@
 
 ## Master(STM32F103)와 Slave(DS18B20) 통신
 
-- 15p~17p 참고
+- 아래는 15p~17p 내용을 번역후 요약한 것
 
 ### READ/WRITE TIME SLOTS
 
@@ -71,7 +71,7 @@
 
 #### Write 1
 
-- Master는 Write 1 time slot에서 **pulling low한 후 1~15us**내에 release해야한다.
+- 서Master는 Write 1 time slot에 **pulling low한 후 1~15us**내에 release해야한다.
 - release된 후에는 5k pullup저항이 1-wire bus를 high상태로 만든다.
 
 #### Write 0
@@ -82,6 +82,8 @@
 #### Write후 DS18B20
 
 - Master가 Write time slot작업을 시작하면 DS18B20(slave)는 15us~60us동안 Sample작업을 지속한다.
+  - sampling동안 Diagram에서 LOW로 내려가는 부분은 Master가 아니라 DS18B20이 LOW로 내리는 부분이니깐 햇갈리지말자
+  - 1-wire 통신으로 master와 slave가 라인을 공유 때문에 햇갈릴 수 있다.
 - sampling동안 1-wire bus가 high이면 Slave는 1을 입력받는다.
 - sampling동안 1-wire bus가 low이면 Slave는 0을 입력받는다.
 
@@ -103,7 +105,7 @@
 
 #### Read 0
 
-- slave는 Master spamling state일 때 bus가 high이면 0을 전송
+- slave는 Master spamling state일 때 bus가 LOW이면 0을 전송
   - end of the time slot 지점에서 bus를 해제하고, 풀업 저항에 의해 대기 상태인 high state로 return
 
 ### ETC...

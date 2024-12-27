@@ -49,16 +49,11 @@
 - 필요한 부분만 쪼개고 요약해서 sample코드에 삽입하자
 
 ```c
-// Mutex 처리에 필요한 함수
-uint8_t isTemperSensorInit() {
-	return m_init;
-}
-
 // Ds18b20Sensor_t	ds18b20[_DS18B20_MAX_SENSORS];
 Ds18b20Sensor_t	temperSensor; // 위 코드의 대체 변수
 
 static uint8_t m_init = 0; // Mutex처리에 필요한 변수
-
+// Mutex 처리에 필요한 함수
 uint16_t isTemperSensorInit() {
 	return m_init;
 }

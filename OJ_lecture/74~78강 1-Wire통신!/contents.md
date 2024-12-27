@@ -108,6 +108,7 @@ void ONEWIRE_DELAY(uint16_t time_us)
 - 위 코드에서 \_DS18B20_TIMER.Instance->CNT값은 counter period 옵션에서 설정한 값내로 주기가 반복된다.
 - if counter period값이 10이고 time_us 값이 10이상이면 Onewire Delay값이 **무한 loop**에 빠지게된다.
 - 따라서 DS18b20_Init() 함수를 벗어날 수 없게된다.
+- 따라서 `counter period`값을 **0xFFFF**로 설정한다.
 
 ## 혼자서 FND에 온도정보 표시해보자
 

@@ -10,7 +10,7 @@
   ![alt text](image-1.png)
 - PA10, PA9 pin 2개 활성화
   ![alt text](image-2.png)
-- 하위 옵션 설정은 일단 그대로 둔고 저장(Code Generation)
+- 하위 옵션 설정은 일단 그대로 두고 저장(Code Generation)
 
 ### 빵판과 FTDI 그리고 STM칩을 연결한다.
 
